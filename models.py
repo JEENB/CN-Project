@@ -60,5 +60,5 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2 ):
 
 
 
-	return test_error, training_error, y_test_pred
+	return 0
 

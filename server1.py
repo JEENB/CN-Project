@@ -2,6 +2,8 @@
 import os
 import socket
 import time
+from models import *
+import pandas as pd
 
 PORT = 2223
 SERVER = socket.gethostname()
@@ -15,7 +17,7 @@ while True:
     conn, addr = server.accept()
     print("Connection established with " + str(addr[0]) + ", " + str(addr[1]))
 
-    file_name = 'neworignial.jpeg'
+    file_name = 'received.csv'
     file_size = conn.recv(100).decode()
     print(file_size)
     # Opening and reading file.
@@ -32,6 +34,7 @@ while True:
             break
         file.write(data)
         c += len(data)
+    file.close()
 
     # Ending the time capture.
     end_time = time.time()
@@ -46,6 +49,9 @@ while True:
     training_ratio = conn.recv(100).decode()
     print(training_ratio)
 
+
+    df = pd.read_csv(file_name)
+    reg_training_model(df, degree = int(degree), split_ratio = int(training_ratio)/100 )
     
 
     # Closing the socket.

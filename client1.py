@@ -7,7 +7,7 @@ PORT = 2223
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((socket.gethostname(), PORT))
 print("[INFO] Connected to server")
-file_name = "original.jpeg"
+file_name = "dataset.csv"
 file_size = os.path.getsize(file_name)
 
 print("[INFO] sending file")
