@@ -12,7 +12,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def reg_training_model(df, degree = 1, split_ratio = 0.2 ):
+
+def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	'''
 	function: poly_reg (Gives the polynomial regression for a set of data)
 		Using PolymnomialFeatures and LinearRegression functions, fits a polynomial of degree n.  
@@ -53,9 +54,13 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2 ):
 	df = pd.DataFrame({"x_test": x_test_1d, "y_test_pred": y_train_pred})
 	df.sort_values(by=["x_test"], inplace = True)
 
-	plt.scatter(x = x_train, y = y_train)
+	plt.figure(figsize=(5,3))
+	plt.scatter(x = x_train, y = y_train, label = "Training Set")
+	plt.xlabel("X")
+	plt.ylabel("Y")
 	plt.plot(df.x_test, df.y_test_pred, label = "Polynomial degree = {}".format(degree), color='r')
 	plt.legend(loc='upper left')	
+	plt.title("Polynomial Fitting")
 	plt.savefig("server_data/fitting.png")
 
 
