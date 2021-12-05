@@ -9,26 +9,28 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from random import randint, sample
 import pandas as pd
+import matplotlib.pyplot as plt
+import pandas as pd
 
-
-def reg_training_model(df, degree = 1):
+def reg_training_model(df, degree = 1, split_ratio = 0.2 ):
 	'''
 	function: poly_reg (Gives the polynomial regression for a set of data)
 		Using PolymnomialFeatures and LinearRegression functions, fits a polynomial of degree n.  
 
 		parm: 
 			1> degree: degree of the polynomial you want to fit
-			2> x_train, y_train : training dataset 1d array 
-			3> x_test, y_test: testing dataset 1d array 
+			2> df: pandas df with x and y
+			3> split_ratio: testing and training 
 		
 		retun: 
 			1> training error and testing error
 		
 		Note: This function will also plot n = degree number of plots
 	'''
+	y = df['y']
 	x = df.drop('y', axis = 1)
-	y = df["y"]
-	x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2)
+
+	x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = split_ratio)
 
 
 	poly_features = PolynomialFeatures(degree)
@@ -43,6 +45,20 @@ def reg_training_model(df, degree = 1):
 
 	test_error = mean_squared_error(y_test, y_test_pred)
 	training_error = mean_squared_error(y_train, y_train_pred)
+
+
+
+	##@Plotting
+	x_test_1d = np.ravel(x_train)
+	df = pd.DataFrame({"x_test": x_test_1d, "y_test_pred": y_train_pred})
+	df.sort_values(by=["x_test"], inplace = True)
+
+	plt.scatter(x = x_train, y = y_train)
+	plt.plot(df.x_test, df.y_test_pred, label = "Polynomial degree = {}".format(degree), color='r')
+	plt.legend(loc='upper left')	
+	plt.savefig("server_data/fitting.png")
+
+
 
 	return test_error, training_error, y_test_pred
 
