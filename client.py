@@ -9,19 +9,27 @@ server_address = (server,port)
 client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 client_socket.connect(server_address)
 
-welcome = client_socket.recv(HEADER).decode()
-print(welcome)
 
-#read input from file
-file = open('dataset.csv', 'r')
-data = file.read()
+while True:
+	msg = client_socket.recv(HEADER).decode()
+	print(msg)
+	if msg[0] == "W": ## i.e welcome msg
+		reply = input()
+		while reply not in [1,2]:
+			print("Invalid Option Selected!!")
+			reply = input()
+		client_socket.send(reply.encode())
+
+# #read input from file
+# file = open('dataset.csv', 'r')
+# data = file.read()
 
 
-#send file name to server
+# #send file name to server
 
 
-#send file content to server
-
+# #send file content to server
+ 
 
 
 

@@ -1,6 +1,7 @@
 import socket
 from _thread import *
 import pandas as pd
+from client import HEADER
 from models import *
 
 port = 5545
@@ -16,7 +17,7 @@ print('Server is running! (IP Address: %s, Port: %s)' % (server_ip, port))
 server.listen(4)
 
 
-welcome_msg = "Welcome! You can start training your model."
+welcome_msg = "Welcome! You can start training your model. Enter 1 to proceed, 2 otherwise."
 
 
 while True:
@@ -24,6 +25,8 @@ while True:
 	print("Connection from: " + str(addr))
 
 	client.send(welcome_msg.encode())
+	msg = client.recv(HEADER).decode()
+	print(msg)
 
 	
 	
