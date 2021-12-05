@@ -2,17 +2,22 @@ import os
 import socket
 import time
 
+# Creating a socket.
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.bind((socket.gethostname(), 22222))
+sock.listen(5)
+print("Host Name: ", sock.getsockname())
 
-PORT = 2223
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((socket.gethostname(), PORT))
-print("[INFO] Connected to server")
-file_name = "dataset.csv"
+# Accepting the connection.
+client, addr = sock.accept()
+
+# Getting file details.
+file_name = input("File Name:")
 file_size = os.path.getsize(file_name)
 
-print("[INFO] sending file")
+# Sending file_name and detail.
+client.send(file_name.encode())
 client.send(str(file_size).encode())
-
 
 # Opening file and sending data.
 with open(file_name, "rb") as file:
@@ -31,6 +36,6 @@ with open(file_name, "rb") as file:
     # Ending the time capture.
     end_time = time.time()
 
-print("[INFO] File Transfer Complete.Total time: ", end_time - start_time)
-# Closing the socket.
-client.close()
+print("File Transfer Complete.Total time: ", end_time - start_time)
+# Cloasing the socket.
+sock.close()
