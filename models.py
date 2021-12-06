@@ -72,7 +72,7 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 
 
 	##-------------------------------------------------
-	#---------- Accuracy vs Predicted -----------------
+	#---------- Ac vs Predicted -----------------
 	##-------------------------------------------------
 	
 	# x axis = actual 
@@ -86,11 +86,12 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	y_= min(min(y_test), min(y_test_pred), min(y_train), min(y_train_pred))
 	x = np.linspace(y_,y,1000)
 	plt.plot(x,x, color = "g")
-
+	plt.xlabel("Actual Results")
+	plt.ylabel("Predicted Results")
 	plt.legend(loc='upper left')	
 	plt.title("Actual VS Predicted")
 	plt.savefig("server_data/actual_pred.png")
-	plt.show()
+
 
 
 	##------------------------------------
@@ -102,7 +103,7 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	plt.ylabel("Mean Square Error")
 	plt.title("Comparing Errors")
 	plt.savefig("server_data/compare_error.png")
-	plt.show()
+
 
 
 	##-------------------------------------------------
@@ -119,20 +120,21 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	plt.legend(loc='upper left')	
 	plt.title("Residual VS Predicted")
 	plt.savefig("server_data/residual_pred.png")
-	plt.show()
+
 
 
 	
 	##-------------------------------------------------
 	#---------- Normal Q- Q----------------------------
 	##-------------------------------------------------
-	fig, (ax1, ax2) = plt.subplot(1,2, figsize=(10,6))
+	fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,6))
 	fig.suptitle('Normal Q-Q')
-	ax1 = sm.qqplot(residual_train, line='45', color ='b')
+	sm.qqplot(residual_train, line='45',  ax = ax1)
 	ax1.set_title("Train")
-	ax2 = sm.qqplot(residual_test, line='45', color = 'r')
-	plt.show()
-	
-
+	ax1.set_ylabel("Standard Residual")
+	sm.qqplot(residual_test, line='45',  ax = ax2)
+	ax2.set_title("Test")
+	ax2.set_ylabel("Standard Residual")
+	plt.savefig("server_data/residual_pred.png")
 	return 0
 
