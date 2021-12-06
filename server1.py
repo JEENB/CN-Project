@@ -8,7 +8,6 @@ SERVER = socket.gethostname()
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((SERVER, PORT))
 
-
 while True:
     server.listen(5)
     print(f"[LISTENING] Server is listening on {SERVER}")

@@ -10,7 +10,7 @@ print("[INFO] Connected to server")
 file_name = "original.jpeg"
 file_size = os.path.getsize(file_name)
 
-print("[INFO] sending file")
+print("[INFO] sending file size")
 client.send(str(file_size).encode())
 
 
