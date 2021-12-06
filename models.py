@@ -54,7 +54,8 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	df = pd.DataFrame({"x_test": x_test_1d, "y_test_pred": y_train_pred})
 	df.sort_values(by=["x_test"], inplace = True)
 
-	plt.figure(figsize=(5,3))
+	# Plot: regression line
+	plt.figure(0,figsize=(8,5))
 	plt.scatter(x = x_train, y = y_train, label = "Training Set")
 	plt.xlabel("X")
 	plt.ylabel("Y")
@@ -63,6 +64,30 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	plt.title("Polynomial Fitting")
 	plt.savefig("server_data/fitting.png")
 
+	# Plot: Accuracy vs Predicted for both training and testing
+	# x axis = actual 
+	# y axis = predicted
+	plt.figure(1,figsize=(8,5))
+	plt.scatter(x = y_train, y = y_train_pred, label = "Training Set", color = 'b')
+	plt.scatter(x = y_test, y = y_test_pred, label = "Testing Set", color = 'r')
+
+	# y = x line
+	y = max(max(y_test),max(y_test_pred), max(y_train), max(y_train_pred))
+	y_= min(min(y_test), min(y_test_pred), min(y_train), min(y_train_pred))
+	x = np.linspace(y_,y,1000)
+	plt.plot(x,x, color = "g")
+
+	plt.legend(loc='upper left')	
+	plt.title("Accuracy VS Predicted")
+	plt.savefig("server_data/accuracy_pred.png")
+
+
+	plt.figure(2,figsize=(8,5))
+	plt.bar(x = ["Test", "Training"], y = [test_error, training_error], width=0.4, height=0.5)
+
+	plt.ylabel("Mean Square Error")
+	plt.title("Comparing Errors")
+	plt.savefig("server_data/compare_error.png")
 
 
 	return 0
