@@ -85,11 +85,13 @@ def choose_file_callback(sender, app_data):
 
 def send_model_data():
     model_degree = dpg.get_value("model_degree")
+    client.send(model_degree.encode())
+    print(f"model degree is {model_degree}")
     model_test_percentage = str(dpg.get_value("model_test_percentage"))
     print(dpg.get_value("model_degree"))
     print(dpg.get_value("model_test_percentage"))
     #======client code starts=====
-    client.send(model_degree.encode())
+    
     client.send(model_test_percentage.encode())
     #========client code ends=======
 
@@ -99,6 +101,32 @@ def send_model_data():
         dpg.add_text("Data sent to server")
         dpg.add_text("Model is getting trained by the model.....")
 
+    #==============client code starts===========
+            #Receive Report from server
+    file_size = client.recv(1024).decode()
+    print(file_size)
+    file_path = 'sentreport.pdf'
+    file = open(file_path, "wb")
+    c = 0
+    # Starting the time capture.
+    start_time = time.time()
+
+    # Running the loop while file is recieved.
+    while c < int(file_size):
+        data = client.recv(1024)
+        if not (data):
+            break
+        file.write(data)
+        c += len(data)
+    file.close()
+
+    # Ending the time capture.
+    end_time = time.time()
+
+    print("[INFO]: Report file received. Total time: ", end_time - start_time)
+
+
+    #===========client code ends========
 
 def get_model_inputs():
     pass

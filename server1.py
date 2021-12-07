@@ -64,6 +64,7 @@ while True:
     #receive info about model training from client
     degree = conn.recv(100).decode()
     print(degree)
+    print("hello")
     training_ratio = conn.recv(100).decode()
     print(training_ratio)
 
@@ -74,7 +75,36 @@ while True:
     reg_training_model(df, degree = int(degree), split_ratio = int(training_ratio)/100, user_dir = user_dir)
 
     tot, maxi, mini, mean, medi, sd = stats_summary(df)
+    print("model training done......")
     c_report(tot, maxi, mini, mean, medi, sd, training_points, testing_points, degree, split = training_ratio, user_dir = user_dir)
+    print(str(tot))
+    print("report generated now")
+
+
+    file_path = f'./server_data/{initial}/report.pdf'
+    file_size = os.path.getsize(file_path)
+    print(file_size)
+    conn.send(str(file_size).encode())
+
+
+    with open(file_path, "rb") as file:
+        c = 0
+        # Starting the time capture.
+        start_time = time.time()
+
+        # Running loop while c != file_size.
+        while c <= file_size:
+            data = file.read(1024)
+            if not (data):
+                break
+            conn.sendall(data)
+            c += len(data)
+
+        # Ending the time capture.
+        end_time = time.time()
+
+    print("[INFO] Report file Transfer Complete.Total time: ", end_time - start_time)
+
 
     # Closing the socket.
     conn.close()
