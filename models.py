@@ -135,6 +135,6 @@ def reg_training_model(df, user_dir, degree = 1, split_ratio = 0.2):
 	sm.qqplot(residual_test, line='45',  ax = ax2)
 	ax2.set_title("Test")
 	ax2.set_ylabel("Standard Residual")
-	plt.savefig(f"{user_dir}/residual_pred.png")
+	plt.savefig(f"{user_dir}/normalqq.png")
 	return 0
 
