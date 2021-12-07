@@ -11,8 +11,10 @@ from random import randint, sample
 import pandas as pd
 import matplotlib.pyplot as plt
 import pandas as pd
+import statsmodels.api as sm
 
-def reg_training_model(df, degree = 1, split_ratio = 0.2 ):
+
+def reg_training_model(df, user_dir, degree = 1, split_ratio = 0.2):
 	'''
 	function: poly_reg (Gives the polynomial regression for a set of data)
 		Using PolymnomialFeatures and LinearRegression functions, fits a polynomial of degree n.  
@@ -53,12 +55,86 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2 ):
 	df = pd.DataFrame({"x_test": x_test_1d, "y_test_pred": y_train_pred})
 	df.sort_values(by=["x_test"], inplace = True)
 
-	plt.scatter(x = x_train, y = y_train)
+
+	##-------------------------------------------------
+	#---------- Regression Line ----- -----------------
+	##-------------------------------------------------
+
+	plt.figure(0,figsize=(8,5))
+	plt.scatter(x = x_train, y = y_train, label = "Training Set")
+	plt.xlabel("X")
+	plt.ylabel("Y")
 	plt.plot(df.x_test, df.y_test_pred, label = "Polynomial degree = {}".format(degree), color='r')
 	plt.legend(loc='upper left')	
-	plt.savefig("server_data/fitting.png")
+	plt.title("Polynomial Fitting")
+	plt.savefig(f"{user_dir}/fitting.png")
+	plt.show()
+
+
+	##-------------------------------------------------
+	#---------- Ac vs Predicted -----------------
+	##-------------------------------------------------
+	
+	# x axis = actual 
+	# y axis = predicted
+	plt.figure(1,figsize=(8,5))
+	plt.scatter(x = y_train, y = y_train_pred, label = "Training Set", color = 'b')
+	plt.scatter(x = y_test, y = y_test_pred, label = "Testing Set", color = 'r')
+
+	# y = x line
+	y = max(max(y_test),max(y_test_pred), max(y_train), max(y_train_pred))
+	y_= min(min(y_test), min(y_test_pred), min(y_train), min(y_train_pred))
+	x = np.linspace(y_,y,1000)
+	plt.plot(x,x, color = "g")
+	plt.xlabel("Actual Results")
+	plt.ylabel("Predicted Results")
+	plt.legend(loc='upper left')	
+	plt.title("Actual VS Predicted")
+	plt.savefig(f"{user_dir}/actual_pred.png")
 
 
 
-	return test_error, training_error, y_test_pred
+	##------------------------------------
+	#---------- Bar Plot -----------------
+	##------------------------------------
+	plt.figure(2,figsize=(8,5))
+	plt.bar(["Test", "Training"], [test_error, training_error], color=['r','b'])
+	plt.ylabel("Dataset")
+	plt.ylabel("Mean Square Error")
+	plt.title("Comparing Errors")
+	plt.savefig(f"{user_dir}/compare_error.png")
+
+
+
+	##-------------------------------------------------
+	#---------- Resudal vs Predicted ------------------
+	##-------------------------------------------------
+
+	residual_test = np.subtract(y_test_pred,y_test)
+	residual_train = np.subtract(y_train_pred, y_train)
+	plt.figure(3,figsize=(8,5))
+	plt.scatter(x =y_test_pred, y = residual_test,label = "Testing Set", color = 'r')
+	plt.scatter(x =y_train_pred, y = residual_train, label = "Training Set", color = 'b')
+	plt.xlabel("Predicted")
+	plt.ylabel("Residual")
+	plt.legend(loc='upper left')	
+	plt.title("Residual VS Predicted")
+	plt.savefig(f"{user_dir}/residual_pred.png")
+
+
+
+	
+	##-------------------------------------------------
+	#---------- Normal Q- Q----------------------------
+	##-------------------------------------------------
+	fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,6))
+	fig.suptitle('Normal Q-Q')
+	sm.qqplot(residual_train, line='45',  ax = ax1)
+	ax1.set_title("Train")
+	ax1.set_ylabel("Standard Residual")
+	sm.qqplot(residual_test, line='45',  ax = ax2)
+	ax2.set_title("Test")
+	ax2.set_ylabel("Standard Residual")
+	plt.savefig(f"{user_dir}/residual_pred.png")
+	return 0
 
