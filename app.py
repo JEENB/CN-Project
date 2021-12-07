@@ -14,6 +14,9 @@ client.connect((socket.gethostname(), PORT))
 print("[INFO] Connected to server")
  #client code ends#
 
+width = 900
+height = 750
+pos = (0,-20)
 
 
 
@@ -27,7 +30,7 @@ def login_callback(sender, app_data, user_data):
     print(dpg.get_value("password"))
     dpg.delete_item("original")
     
-    with dpg.window(label="Example Window", width=500, height=500, tag="original"):
+    with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
         dpg.add_text("you have logged in")
         with dpg.file_dialog(directory_selector=False, show=False, callback=choose_file_callback, id="file_dialog_id"):
             dpg.add_file_extension(".csv")
@@ -74,7 +77,7 @@ def choose_file_callback(sender, app_data):
     print("[INFO] File Transfer Complete.Total time: ", end_time - start_time)
     #============client code ends==========#
     dpg.delete_item("original")
-    with dpg.window(label="Example Window", width=500, height=500, tag="original"):
+    with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
         dpg.add_text("Your file has been selected and sent to server.")
         dpg.add_text("Enter the desired degree of your regression model. Eg-3")
         dpg.add_input_text(label="Regression Degree", tag="model_degree")
@@ -97,7 +100,7 @@ def send_model_data():
 
 
     dpg.delete_item("original")
-    with dpg.window(label="Example Window", width=500, height=500, tag="original"):
+    with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
         dpg.add_text("Data sent to server")
         dpg.add_text("Model is getting trained by the model.....")
 
@@ -149,14 +152,14 @@ def get_model_inputs():
 
 
 dpg.create_context()
-dpg.create_viewport(title="Machine Learning on Server", width=500, height=500)
+dpg.create_viewport(title="Machine Learning on Server", width=width, height=height, x_pos=0, y_pos=-20)
 dpg.setup_dearpygui()
 
 
 
 
 
-with dpg.window(label="Example Window", width=500, height=500, tag="original"):
+with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
     dpg.add_text("Enter your login credentials")
     dpg.add_input_text(label="User Name", tag="username")
     dpg.add_input_text(label="Password", tag="password")
