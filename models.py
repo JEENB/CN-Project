@@ -68,10 +68,7 @@ def reg_training_model(df, user_dir, degree = 1, split_ratio = 0.2):
 	plt.legend(loc='upper left')	
 	plt.title("Polynomial Fitting")
 	plt.savefig(f"{user_dir}/fitting.png")
-<<<<<<< HEAD
 	# plt.show()
-=======
->>>>>>> 65771cfe70696bdfb5aef65df8cf3f8aa223ab0b
 
 
 	##-------------------------------------------------

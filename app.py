@@ -102,7 +102,59 @@ def send_model_data():
     dpg.delete_item("original")
     with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
         dpg.add_text("Data sent to server")
-        dpg.add_text("Model is getting trained by the model.....")
+        dpg.add_text("Model is getting trained by the server.....")
+
+    #receive image
+    file_size = client.recv(1024).decode()
+
+    print(file_size)
+    file_path = 'receivedFitting.png'
+    file = open(file_path, "wb")
+    c = 0
+    # Starting the time capture.
+    start_time = time.time()
+
+    # Running the loop while file is recieved.
+    while c < int(file_size):
+        data = client.recv(1024)
+        if not (data):
+            break
+        file.write(data)
+        c += len(data)
+    file.close()
+
+    # Ending the time capture.
+    end_time = time.time()
+
+    print("[INFO]: Fitting image file received. Total time: ", end_time - start_time)
+
+    #recv msg that model is trained. Show to GUI with text and image.
+    #=====need to adjust image size
+    dpg.delete_item("original")
+    with dpg.window(label="Example Window", width=900, height=750, tag="original", pos=pos):
+        dpg.add_text("Your model is trained. ")
+        #show image
+        width1, height1, channels, data = dpg.load_image('receivedFitting.png')
+        
+        with dpg.texture_registry(show=True):
+            dpg.add_static_texture(width1, height1, data, tag="texture_tag")
+        dpg.add_image("texture_tag")
+        # with dpg.window(label="Tutorial"):
+            
+        
+        
+        
+        #show msg "finalising report...."
+        # msg = client.recv(1024).decode()
+
+        dpg.add_text("finalising report...")
+
+
+
+    
+    
+
+
 
     #==============client code starts===========
             #Receive Report from server
@@ -129,7 +181,20 @@ def send_model_data():
     print("[INFO]: Report file received. Total time: ", end_time - start_time)
 
 
+
+
     #===========client code ends========
+
+
+    #recreate the previous window along with received report's path
+    # working_dir_path = os.getworkingdirectory()
+    # new_file_path = working_dir_path + '/' + file_path
+
+    dpg.delete_item("original")
+    with dpg.window(label="Example Window", width=900, height=750, tag="original", pos=pos):
+        dpg.add_text("Your final report downloaded at location: " + str(file_path))
+
+
 
 def get_model_inputs():
     pass
