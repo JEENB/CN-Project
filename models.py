@@ -14,7 +14,7 @@ import pandas as pd
 import statsmodels.api as sm
 
 
-def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
+def reg_training_model(df, user_dir, degree = 1, split_ratio = 0.2):
 	'''
 	function: poly_reg (Gives the polynomial regression for a set of data)
 		Using PolymnomialFeatures and LinearRegression functions, fits a polynomial of degree n.  
@@ -67,7 +67,7 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	plt.plot(df.x_test, df.y_test_pred, label = "Polynomial degree = {}".format(degree), color='r')
 	plt.legend(loc='upper left')	
 	plt.title("Polynomial Fitting")
-	plt.savefig("server_data/fitting.png")
+	plt.savefig(f"{user_dir}/fitting.png")
 	plt.show()
 
 
@@ -90,7 +90,7 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	plt.ylabel("Predicted Results")
 	plt.legend(loc='upper left')	
 	plt.title("Actual VS Predicted")
-	plt.savefig("server_data/actual_pred.png")
+	plt.savefig(f"{user_dir}/actual_pred.png")
 
 
 
@@ -102,7 +102,7 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	plt.ylabel("Dataset")
 	plt.ylabel("Mean Square Error")
 	plt.title("Comparing Errors")
-	plt.savefig("server_data/compare_error.png")
+	plt.savefig(f"{user_dir}/compare_error.png")
 
 
 
@@ -119,7 +119,7 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	plt.ylabel("Residual")
 	plt.legend(loc='upper left')	
 	plt.title("Residual VS Predicted")
-	plt.savefig("server_data/residual_pred.png")
+	plt.savefig(f"{user_dir}/residual_pred.png")
 
 
 
@@ -135,6 +135,6 @@ def reg_training_model(df, degree = 1, split_ratio = 0.2, email ="dummy"):
 	sm.qqplot(residual_test, line='45',  ax = ax2)
 	ax2.set_title("Test")
 	ax2.set_ylabel("Standard Residual")
-	plt.savefig("server_data/residual_pred.png")
+	plt.savefig(f"{user_dir}/residual_pred.png")
 	return 0
 
