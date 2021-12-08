@@ -1,4 +1,3 @@
-
 import os
 import socket
 import time
@@ -76,6 +75,39 @@ while True:
 
     tot, maxi, mini, mean, medi, sd = stats_summary(df)
     print("model training done......")
+
+    #send 1 image to client
+    file_path = f'./server_data/{initial}/fitting.png'
+    file_size = os.path.getsize(file_path)
+    print(file_size)
+    conn.send(str(file_size).encode())
+
+
+    with open(file_path, "rb") as file:
+        c = 0
+        # Starting the time capture.
+        start_time = time.time()
+
+        # Running loop while c != file_size.
+        while c <= file_size:
+            data = file.read(1024)
+            if not (data):
+                break
+            conn.sendall(data)
+            c += len(data)
+
+        # Ending the time capture.
+        end_time = time.time()
+    file.close()
+    print("[INFO] Fitting image Transfer Complete.Total time: ", end_time - start_time)
+
+
+    #client "finalising report......"
+    # conn.send("finalising report....".encode())
+
+    #file report downloaded. Local path"receivedreport.pdf"
+
+
     c_report(tot, maxi, mini, mean, medi, sd, training_points, testing_points, degree, split = training_ratio, user_dir = user_dir)
     print(str(tot))
     print("report generated now")
@@ -102,7 +134,7 @@ while True:
 
         # Ending the time capture.
         end_time = time.time()
-
+    file.close()
     print("[INFO] Report file Transfer Complete.Total time: ", end_time - start_time)
 
 
