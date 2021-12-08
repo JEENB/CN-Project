@@ -6,8 +6,10 @@ import os
 import os
 import socket
 import time
+import re
 
 
+email_regex = '[A-Za-z0-9._%+-]+@ashoka\.edu\.in'
 PORT = 2223
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((socket.gethostname(), PORT))
@@ -18,7 +20,7 @@ width = 900
 height = 750
 pos = (0,-20)
 
-
+client_dir = os.getcwd()
 
 def login_callback(sender, app_data, user_data):
    
@@ -26,19 +28,41 @@ def login_callback(sender, app_data, user_data):
     print(f"sender is {sender}")
     print(f"app_data is {app_data}")
     print(f"user data is {user_data}")
-    print(dpg.get_value("username"))
-    print(dpg.get_value("password"))
-    dpg.delete_item("original")
+    email = dpg.get_value("username")
+    pswd = dpg.get_value("password")
+    if not re.search(email_regex, email):
+        dpg.delete_item("original")
+        with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
+
+            dpg.add_text("Email must end with '@ashoka.edu.in'.")
+            dpg.add_text("Login again to continue.")
+
+    else:
+
+       
+        client.send(email.encode())
+        client.send(pswd.encode())
+
+        msg = client.recv(1024).decode()
+        print(msg)
     
-    with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
-        dpg.add_text("you have logged in")
-        with dpg.file_dialog(directory_selector=False, show=False, callback=choose_file_callback, id="file_dialog_id"):
-            dpg.add_file_extension(".csv")
-            # dpg.add_file_extension("", color=(150, 255, 150, 255))
-            # dpg.add_file_extension("Source files (*.cpp *.h *.hpp){.cpp,.h,.hpp}", color=(0, 255, 255, 255))
-            # dpg.add_file_extension(".h", color=(255, 0, 255, 255), custom_text="[header]")
-            # dpg.add_file_extension(".py", color=(0, 255, 0, 255), custom_text="[Python]")
-        dpg.add_button(label="File Selector", callback=lambda: dpg.show_item("file_dialog_id"))
+        if msg == "Error!":
+            dpg.delete_item("original")
+            with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
+                dpg.add_text("Login Failed!!")
+                dpg.add_text("Please re-run to login.")
+        else:
+            dpg.delete_item("original")
+            
+            with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
+                dpg.add_text("you have logged in")
+                with dpg.file_dialog(directory_selector=False, show=False, callback=choose_file_callback, id="file_dialog_id"):
+                    dpg.add_file_extension(".csv")
+                    # dpg.add_file_extension("", color=(150, 255, 150, 255))
+                    # dpg.add_file_extension("Source files (*.cpp *.h *.hpp){.cpp,.h,.hpp}", color=(0, 255, 255, 255))
+                    # dpg.add_file_extension(".h", color=(255, 0, 255, 255), custom_text="[header]")
+                    # dpg.add_file_extension(".py", color=(0, 255, 0, 255), custom_text="[Python]")
+                dpg.add_button(label="File Selector", callback=lambda: dpg.show_item("file_dialog_id"))
 
 
 
@@ -108,13 +132,14 @@ def send_model_data():
     file_size = client.recv(1024).decode()
 
     print(file_size)
-    file_path = 'receivedFitting.png'
+    file_path = f'{client_dir}/client_data/receivedFitting.png'
     file = open(file_path, "wb")
     c = 0
     # Starting the time capture.
     start_time = time.time()
 
     # Running the loop while file is recieved.
+    
     while c < int(file_size):
         data = client.recv(1024)
         if not (data):
@@ -160,7 +185,7 @@ def send_model_data():
             #Receive Report from server
     file_size = client.recv(1024).decode()
     print(file_size)
-    file_path = 'sentreport.pdf'
+    file_path =  f'{client_dir}/client_data/sentreport.pdf'
     file = open(file_path, "wb")
     c = 0
     # Starting the time capture.
@@ -192,48 +217,25 @@ def send_model_data():
 
     dpg.delete_item("original")
     with dpg.window(label="Example Window", width=900, height=750, tag="original", pos=pos):
-        dpg.add_text("Your final report downloaded at location: " + str(file_path))
+        dpg.add_text("Your final report downloaded at location: \n {client_dir}\\client_data\\sentreport.pdf" )
 
 
 
 def get_model_inputs():
     pass
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 dpg.create_context()
 dpg.create_viewport(title="Machine Learning on Server", width=width, height=height, x_pos=0, y_pos=-20)
 dpg.setup_dearpygui()
 
 
-
-
-
 with dpg.window(label="Example Window", width=width, height=height, tag="original", pos=pos):
     dpg.add_text("Enter your login credentials")
     dpg.add_input_text(label="User Name", tag="username")
-    dpg.add_input_text(label="Password", tag="password")
+    dpg.add_input_text(label="Password", tag="password", password=True)
     dpg.add_button(label="Login", callback=login_callback)
+
     # dpg.add_slider_float(label="float")
-
-
-
-
 
 dpg.show_viewport()
 dpg.start_dearpygui()

@@ -5,27 +5,60 @@ from models import *
 import pandas as pd
 from utils import *
 from create_report import *
+import re
+import hashlib
+from threading import *
 
 PORT = 2223
 SERVER = socket.gethostname()
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((SERVER, PORT))
-HEADER = 2048
+HEADER = 1024
 
 server_dir = "./server_data/"
+
+user_dic = {}
+live_table = []
+
+
+def password_check(email, pswd):
+    if email in user_dic:
+        if user_dic[email] == pswd:
+            live_table.append(email)
+            return "Login"
+        elif user_dic[email] != pswd:
+            return "Error"
+    else:
+        user_dic[email] = pswd
+        live_table.append(email)
+        return "Signup"
 
 while True:
     server.listen(5)
     print(f"[LISTENING] Server is listening on {SERVER}")
     conn, addr = server.accept()
     print("Connection established with " + str(addr[0]) + ", " + str(addr[1]))
-
-    # email = server.recv(HEADER).decode()
+    # email = conn.recv(HEADER).decode()
     # initial = email.split('@')[0]
-    # password = server.recv(HEADER).decode()
+    # password = conn.recv(HEADER).decode()
+    login = False
+    while login == False:
+        email = conn.recv(HEADER).decode()
+        initial = email.split('@')[0]
+        password = conn.recv(HEADER).decode()
+        password = hashlib.sha256(password.encode("utf-8")).hexdigest()
+        pswd_return = password_check(email, password)
+        print(pswd_return)
+        if pswd_return == "Login" or pswd_return == "Signup":
+            conn.send("Thank You!".encode())
+            login = True
+            break
+        else:
+            conn.send("Error!".encode())
+            login = False
 
-    initial = "jen"
-     
+
+    print(email+password)
     user_dir = os.path.join(server_dir, initial)
     if os.path.isdir(user_dir):
         pass
@@ -137,6 +170,6 @@ while True:
     file.close()
     print("[INFO] Report file Transfer Complete.Total time: ", end_time - start_time)
 
-
+    live_table.remove(email)
     # Closing the socket.
     conn.close()
