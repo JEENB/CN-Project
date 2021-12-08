@@ -217,7 +217,7 @@ def send_model_data():
 
     dpg.delete_item("original")
     with dpg.window(label="Example Window", width=900, height=750, tag="original", pos=pos):
-        dpg.add_text("Your final report downloaded at location: \n {client_dir}\\client_data\\sentreport.pdf" )
+        dpg.add_text(f"Your final report downloaded at location: \n{client_dir}\\client_data\\sentreport.pdf" )
 
 
 

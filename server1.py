@@ -7,13 +7,18 @@ from utils import *
 from create_report import *
 import re
 import hashlib
-from threading import *
+from _thread import *
+
+
+thread_count = 0
 
 PORT = 2223
 SERVER = socket.gethostname()
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((SERVER, PORT))
 HEADER = 1024
+server.listen(5)
+print(f"[LISTENING] Server is listening on {SERVER}")
 
 server_dir = "./server_data/"
 
@@ -22,22 +27,19 @@ live_table = []
 
 
 def password_check(email, pswd):
+    hashpswd = hashlib.sha256(pswd.encode("utf-8")).hexdigest()
     if email in user_dic:
-        if user_dic[email] == pswd:
+        if user_dic[email] == hashpswd:
             live_table.append(email)
             return "Login"
-        elif user_dic[email] != pswd:
+        elif user_dic[email] != hashpswd:
             return "Error"
     else:
-        user_dic[email] = pswd
+        user_dic[email] = hashpswd
         live_table.append(email)
         return "Signup"
 
-while True:
-    server.listen(5)
-    print(f"[LISTENING] Server is listening on {SERVER}")
-    conn, addr = server.accept()
-    print("Connection established with " + str(addr[0]) + ", " + str(addr[1]))
+def client_thread(client, addr):
     # email = conn.recv(HEADER).decode()
     # initial = email.split('@')[0]
     # password = conn.recv(HEADER).decode()
@@ -57,8 +59,6 @@ while True:
             conn.send("Error!".encode())
             login = False
 
-
-    print(email+password)
     user_dir = os.path.join(server_dir, initial)
     if os.path.isdir(user_dir):
         pass
@@ -96,7 +96,7 @@ while True:
     #receive info about model training from client
     degree = conn.recv(100).decode()
     print(degree)
-    print("hello")
+    
     training_ratio = conn.recv(100).decode()
     print(training_ratio)
 
@@ -173,3 +173,13 @@ while True:
     live_table.remove(email)
     # Closing the socket.
     conn.close()
+    print(f"Connection Closed with {addr}")
+
+
+
+while True:
+    conn, addr = server.accept()
+    print("Connection established with " + str(addr[0]) + ", " + str(addr[1]))
+    start_new_thread(client_thread, (conn,addr))
+    thread_count += 1
+    print('Thread Number: ' + str(thread_count))

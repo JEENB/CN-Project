@@ -1,0 +1,6 @@
+dearpygui==1.1.1
+pandas==1.2.4
+fpdf==1.7.2
+scikit-learn==0.24.2
+statsmodels==0.13.1
+matplotlib==3.4.1
