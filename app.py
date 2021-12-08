@@ -159,7 +159,7 @@ def send_model_data():
     with dpg.window(label="Example Window", width=900, height=750, tag="original", pos=pos):
         dpg.add_text("Your model is trained. ")
         #show image
-        width1, height1, channels, data = dpg.load_image('receivedFitting.png')
+        width1, height1, channels, data = dpg.load_image('./client_data/receivedFitting.png')
         
         with dpg.texture_registry(show=True):
             dpg.add_static_texture(width1, height1, data, tag="texture_tag")
