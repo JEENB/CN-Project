@@ -10,5 +10,5 @@ python app.py
 ```
 ## Protocol between Server and Client using socket programming
 
-[!alt Server-Client Protocol](media/notionCover.jpeg)
+![alt Server-Client Protocol](media/mlOverLan.png)
 
